@@ -69,7 +69,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 25 "finder.y" /* yacc.c:1909  */
+#line 23 "finder.y" /* yacc.c:1909  */
 
 	uint32_t   	ival;
 	char		*str;

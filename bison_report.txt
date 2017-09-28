@@ -5,8 +5,8 @@
    CONTAINS
 
 
-Состояние 13 конфликты: 2 сдвига/вывода
-Состояние 15 конфликты: 2 сдвига/вывода
+Состояние 12 конфликты: 2 сдвига/вывода
+Состояние 14 конфликты: 2 сдвига/вывода
 
 
 Грамматика
@@ -14,56 +14,52 @@
     0 $accept: input $end
 
     1 input: %empty
-    2      | input NEWLINE
-    3      | input line
+    2      | input line
 
-    4 line: entry_point
-    5     | path_rule
-    6     | error
-    7     | QUIT
+    3 line: STR entry_point NEWLINE
+    4     | error NEWLINE
+    5     | QUIT NEWLINE
 
-    8 path_rule: STR
+    6 entry_point: braced_expr
+    7            | not_expr
+    8            | filter
 
-    9 entry_point: braced_expr
-   10            | not_expr
-   11            | filter
+    9 braced_expr: LEFT not_expr RIGHT
+   10            | LEFT filter RIGHT
+   11            | LEFT braced_expr RIGHT
+   12            | braced_expr AND entry_point
+   13            | braced_expr OR entry_point
 
-   12 braced_expr: LEFT not_expr RIGHT
-   13            | LEFT filter RIGHT
-   14            | LEFT braced_expr RIGHT
-   15            | braced_expr AND entry_point
-   16            | braced_expr OR entry_point
+   14 not_expr: NOT braced_expr
+   15         | NOT filter
 
-   17 not_expr: NOT braced_expr
-   18         | NOT filter
-
-   19 filter: SIZE IS INT
-   20       | SIZE MORE INT
-   21       | SIZE LESS INT
-   22       | filter AND entry_point
-   23       | filter OR entry_point
+   16 filter: SIZE IS INT
+   17       | SIZE MORE INT
+   18       | SIZE LESS INT
+   19       | filter AND entry_point
+   20       | filter OR entry_point
 
 
 Терминальные символы с правилами, в которых они появляются
 
 $end (0) 0
-error (256) 6
-INT (258) 19 20 21
-STR (259) 8
-LEFT (260) 12 13 14
-RIGHT (261) 12 13 14
-OR (262) 16 23
-AND (263) 15 22
-NOT (264) 17 18
+error (256) 4
+INT (258) 16 17 18
+STR (259) 3
+LEFT (260) 9 10 11
+RIGHT (261) 9 10 11
+OR (262) 13 20
+AND (263) 12 19
+NOT (264) 14 15
 NAME (265)
-SIZE (266) 19 20 21
+SIZE (266) 16 17 18
 ATTRIBUTE (267)
-IS (268) 19
-LESS (269) 21
-MORE (270) 20
+IS (268) 16
+LESS (269) 18
+MORE (270) 17
 CONTAINS (271)
-NEWLINE (272) 2
-QUIT (273) 7
+NEWLINE (272) 3 4 5
+QUIT (273) 5
 
 
 Нетерминальные символы с правилами, в которых они появляются
@@ -71,27 +67,24 @@ QUIT (273) 7
 $accept (19)
     налево: 0
 input (20)
-    налево: 1 2 3, направо: 0 2 3
+    налево: 1 2, направо: 0 2
 line (21)
-    налево: 4 5 6 7, направо: 3
-path_rule (22)
-    налево: 8, направо: 5
-entry_point (23)
-    налево: 9 10 11, направо: 4 15 16 22 23
-braced_expr (24)
-    налево: 12 13 14 15 16, направо: 9 14 15 16 17
-not_expr (25)
-    налево: 17 18, направо: 10 12
-filter (26)
-    налево: 19 20 21 22 23, направо: 11 13 18 22 23
+    налево: 3 4 5, направо: 2
+entry_point (22)
+    налево: 6 7 8, направо: 3 12 13 19 20
+braced_expr (23)
+    налево: 9 10 11 12 13, направо: 6 11 12 13 14
+not_expr (24)
+    налево: 14 15, направо: 7 9
+filter (25)
+    налево: 16 17 18 19 20, направо: 8 10 15 19 20
 
 
 Состояние 0
 
     0 $accept: . input $end
     1 input: . %empty
-    2      | . input NEWLINE
-    3      | . input line
+    2      | . input line
 
     $default  вывод с использованием правила 1 (input)
 
@@ -101,44 +94,17 @@ filter (26)
 Состояние 1
 
     0 $accept: input . $end
-    2 input: input . NEWLINE
-    3      | input . line
-    4 line: . entry_point
-    5     | . path_rule
-    6     | . error
-    7     | . QUIT
-    8 path_rule: . STR
-    9 entry_point: . braced_expr
-   10            | . not_expr
-   11            | . filter
-   12 braced_expr: . LEFT not_expr RIGHT
-   13            | . LEFT filter RIGHT
-   14            | . LEFT braced_expr RIGHT
-   15            | . braced_expr AND entry_point
-   16            | . braced_expr OR entry_point
-   17 not_expr: . NOT braced_expr
-   18         | . NOT filter
-   19 filter: . SIZE IS INT
-   20       | . SIZE MORE INT
-   21       | . SIZE LESS INT
-   22       | . filter AND entry_point
-   23       | . filter OR entry_point
+    2 input: input . line
+    3 line: . STR entry_point NEWLINE
+    4     | . error NEWLINE
+    5     | . QUIT NEWLINE
 
-    $end     сдвиг, и переход в состояние 2
-    error    сдвиг, и переход в состояние 3
-    STR      сдвиг, и переход в состояние 4
-    LEFT     сдвиг, и переход в состояние 5
-    NOT      сдвиг, и переход в состояние 6
-    SIZE     сдвиг, и переход в состояние 7
-    NEWLINE  сдвиг, и переход в состояние 8
-    QUIT     сдвиг, и переход в состояние 9
+    $end   сдвиг, и переход в состояние 2
+    error  сдвиг, и переход в состояние 3
+    STR    сдвиг, и переход в состояние 4
+    QUIT   сдвиг, и переход в состояние 5
 
-    line         переход в состояние 10
-    path_rule    переход в состояние 11
-    entry_point  переход в состояние 12
-    braced_expr  переход в состояние 13
-    not_expr     переход в состояние 14
-    filter       переход в состояние 15
+    line  переход в состояние 6
 
 
 Состояние 2
@@ -150,403 +116,432 @@ filter (26)
 
 Состояние 3
 
-    6 line: error .
+    4 line: error . NEWLINE
 
-    $default  вывод с использованием правила 6 (line)
+    NEWLINE  сдвиг, и переход в состояние 7
 
 
 Состояние 4
 
-    8 path_rule: STR .
+    3 line: STR . entry_point NEWLINE
+    6 entry_point: . braced_expr
+    7            | . not_expr
+    8            | . filter
+    9 braced_expr: . LEFT not_expr RIGHT
+   10            | . LEFT filter RIGHT
+   11            | . LEFT braced_expr RIGHT
+   12            | . braced_expr AND entry_point
+   13            | . braced_expr OR entry_point
+   14 not_expr: . NOT braced_expr
+   15         | . NOT filter
+   16 filter: . SIZE IS INT
+   17       | . SIZE MORE INT
+   18       | . SIZE LESS INT
+   19       | . filter AND entry_point
+   20       | . filter OR entry_point
 
-    $default  вывод с использованием правила 8 (path_rule)
+    LEFT  сдвиг, и переход в состояние 8
+    NOT   сдвиг, и переход в состояние 9
+    SIZE  сдвиг, и переход в состояние 10
+
+    entry_point  переход в состояние 11
+    braced_expr  переход в состояние 12
+    not_expr     переход в состояние 13
+    filter       переход в состояние 14
 
 
 Состояние 5
 
-   12 braced_expr: . LEFT not_expr RIGHT
-   12            | LEFT . not_expr RIGHT
-   13            | . LEFT filter RIGHT
-   13            | LEFT . filter RIGHT
-   14            | . LEFT braced_expr RIGHT
-   14            | LEFT . braced_expr RIGHT
-   15            | . braced_expr AND entry_point
-   16            | . braced_expr OR entry_point
-   17 not_expr: . NOT braced_expr
-   18         | . NOT filter
-   19 filter: . SIZE IS INT
-   20       | . SIZE MORE INT
-   21       | . SIZE LESS INT
-   22       | . filter AND entry_point
-   23       | . filter OR entry_point
+    5 line: QUIT . NEWLINE
 
-    LEFT  сдвиг, и переход в состояние 5
-    NOT   сдвиг, и переход в состояние 6
-    SIZE  сдвиг, и переход в состояние 7
+    NEWLINE  сдвиг, и переход в состояние 15
+
+
+Состояние 6
+
+    2 input: input line .
+
+    $default  вывод с использованием правила 2 (input)
+
+
+Состояние 7
+
+    4 line: error NEWLINE .
+
+    $default  вывод с использованием правила 4 (line)
+
+
+Состояние 8
+
+    9 braced_expr: . LEFT not_expr RIGHT
+    9            | LEFT . not_expr RIGHT
+   10            | . LEFT filter RIGHT
+   10            | LEFT . filter RIGHT
+   11            | . LEFT braced_expr RIGHT
+   11            | LEFT . braced_expr RIGHT
+   12            | . braced_expr AND entry_point
+   13            | . braced_expr OR entry_point
+   14 not_expr: . NOT braced_expr
+   15         | . NOT filter
+   16 filter: . SIZE IS INT
+   17       | . SIZE MORE INT
+   18       | . SIZE LESS INT
+   19       | . filter AND entry_point
+   20       | . filter OR entry_point
+
+    LEFT  сдвиг, и переход в состояние 8
+    NOT   сдвиг, и переход в состояние 9
+    SIZE  сдвиг, и переход в состояние 10
 
     braced_expr  переход в состояние 16
     not_expr     переход в состояние 17
     filter       переход в состояние 18
 
 
-Состояние 6
+Состояние 9
 
-   12 braced_expr: . LEFT not_expr RIGHT
-   13            | . LEFT filter RIGHT
-   14            | . LEFT braced_expr RIGHT
-   15            | . braced_expr AND entry_point
-   16            | . braced_expr OR entry_point
-   17 not_expr: NOT . braced_expr
-   18         | NOT . filter
-   19 filter: . SIZE IS INT
-   20       | . SIZE MORE INT
-   21       | . SIZE LESS INT
-   22       | . filter AND entry_point
-   23       | . filter OR entry_point
+    9 braced_expr: . LEFT not_expr RIGHT
+   10            | . LEFT filter RIGHT
+   11            | . LEFT braced_expr RIGHT
+   12            | . braced_expr AND entry_point
+   13            | . braced_expr OR entry_point
+   14 not_expr: NOT . braced_expr
+   15         | NOT . filter
+   16 filter: . SIZE IS INT
+   17       | . SIZE MORE INT
+   18       | . SIZE LESS INT
+   19       | . filter AND entry_point
+   20       | . filter OR entry_point
 
-    LEFT  сдвиг, и переход в состояние 5
-    SIZE  сдвиг, и переход в состояние 7
+    LEFT  сдвиг, и переход в состояние 8
+    SIZE  сдвиг, и переход в состояние 10
 
     braced_expr  переход в состояние 19
     filter       переход в состояние 20
 
 
-Состояние 7
+Состояние 10
 
-   19 filter: SIZE . IS INT
-   20       | SIZE . MORE INT
-   21       | SIZE . LESS INT
+   16 filter: SIZE . IS INT
+   17       | SIZE . MORE INT
+   18       | SIZE . LESS INT
 
     IS    сдвиг, и переход в состояние 21
     LESS  сдвиг, и переход в состояние 22
     MORE  сдвиг, и переход в состояние 23
 
 
-Состояние 8
-
-    2 input: input NEWLINE .
-
-    $default  вывод с использованием правила 2 (input)
-
-
-Состояние 9
-
-    7 line: QUIT .
-
-    $default  вывод с использованием правила 7 (line)
-
-
-Состояние 10
-
-    3 input: input line .
-
-    $default  вывод с использованием правила 3 (input)
-
-
 Состояние 11
 
-    5 line: path_rule .
+    3 line: STR entry_point . NEWLINE
 
-    $default  вывод с использованием правила 5 (line)
+    NEWLINE  сдвиг, и переход в состояние 24
 
 
 Состояние 12
 
-    4 line: entry_point .
+    6 entry_point: braced_expr .  [RIGHT, OR, AND, NEWLINE]
+   12 braced_expr: braced_expr . AND entry_point
+   13            | braced_expr . OR entry_point
 
-    $default  вывод с использованием правила 4 (line)
+    OR   сдвиг, и переход в состояние 25
+    AND  сдвиг, и переход в состояние 26
+
+    OR        [вывод с использованием правила 6 (entry_point)]
+    AND       [вывод с использованием правила 6 (entry_point)]
+    $default  вывод с использованием правила 6 (entry_point)
 
 
 Состояние 13
 
-    9 entry_point: braced_expr .  [$end, error, STR, LEFT, RIGHT, OR, AND, NOT, SIZE, NEWLINE, QUIT]
-   15 braced_expr: braced_expr . AND entry_point
-   16            | braced_expr . OR entry_point
+    7 entry_point: not_expr .
 
-    OR   сдвиг, и переход в состояние 24
-    AND  сдвиг, и переход в состояние 25
-
-    OR        [вывод с использованием правила 9 (entry_point)]
-    AND       [вывод с использованием правила 9 (entry_point)]
-    $default  вывод с использованием правила 9 (entry_point)
+    $default  вывод с использованием правила 7 (entry_point)
 
 
 Состояние 14
 
-   10 entry_point: not_expr .
+    8 entry_point: filter .  [RIGHT, OR, AND, NEWLINE]
+   19 filter: filter . AND entry_point
+   20       | filter . OR entry_point
 
-    $default  вывод с использованием правила 10 (entry_point)
+    OR   сдвиг, и переход в состояние 27
+    AND  сдвиг, и переход в состояние 28
+
+    OR        [вывод с использованием правила 8 (entry_point)]
+    AND       [вывод с использованием правила 8 (entry_point)]
+    $default  вывод с использованием правила 8 (entry_point)
 
 
 Состояние 15
 
-   11 entry_point: filter .  [$end, error, STR, LEFT, RIGHT, OR, AND, NOT, SIZE, NEWLINE, QUIT]
-   22 filter: filter . AND entry_point
-   23       | filter . OR entry_point
+    5 line: QUIT NEWLINE .
 
-    OR   сдвиг, и переход в состояние 26
-    AND  сдвиг, и переход в состояние 27
-
-    OR        [вывод с использованием правила 11 (entry_point)]
-    AND       [вывод с использованием правила 11 (entry_point)]
-    $default  вывод с использованием правила 11 (entry_point)
+    $default  вывод с использованием правила 5 (line)
 
 
 Состояние 16
 
-   14 braced_expr: LEFT braced_expr . RIGHT
-   15            | braced_expr . AND entry_point
-   16            | braced_expr . OR entry_point
+   11 braced_expr: LEFT braced_expr . RIGHT
+   12            | braced_expr . AND entry_point
+   13            | braced_expr . OR entry_point
 
-    RIGHT  сдвиг, и переход в состояние 28
-    OR     сдвиг, и переход в состояние 24
-    AND    сдвиг, и переход в состояние 25
+    RIGHT  сдвиг, и переход в состояние 29
+    OR     сдвиг, и переход в состояние 25
+    AND    сдвиг, и переход в состояние 26
 
 
 Состояние 17
 
-   12 braced_expr: LEFT not_expr . RIGHT
+    9 braced_expr: LEFT not_expr . RIGHT
 
-    RIGHT  сдвиг, и переход в состояние 29
+    RIGHT  сдвиг, и переход в состояние 30
 
 
 Состояние 18
 
-   13 braced_expr: LEFT filter . RIGHT
-   22 filter: filter . AND entry_point
-   23       | filter . OR entry_point
+   10 braced_expr: LEFT filter . RIGHT
+   19 filter: filter . AND entry_point
+   20       | filter . OR entry_point
 
-    RIGHT  сдвиг, и переход в состояние 30
-    OR     сдвиг, и переход в состояние 26
-    AND    сдвиг, и переход в состояние 27
+    RIGHT  сдвиг, и переход в состояние 31
+    OR     сдвиг, и переход в состояние 27
+    AND    сдвиг, и переход в состояние 28
 
 
 Состояние 19
 
-   15 braced_expr: braced_expr . AND entry_point
-   16            | braced_expr . OR entry_point
-   17 not_expr: NOT braced_expr .  [$end, error, STR, LEFT, RIGHT, OR, AND, NOT, SIZE, NEWLINE, QUIT]
+   12 braced_expr: braced_expr . AND entry_point
+   13            | braced_expr . OR entry_point
+   14 not_expr: NOT braced_expr .  [RIGHT, OR, AND, NEWLINE]
 
-    $default  вывод с использованием правила 17 (not_expr)
+    $default  вывод с использованием правила 14 (not_expr)
 
-    Конфликт между правилом 17 и лексемой OR разрешен выводом (OR < NOT).
-    Конфликт между правилом 17 и лексемой AND разрешен выводом (AND < NOT).
+    Конфликт между правилом 14 и лексемой OR разрешен выводом (OR < NOT).
+    Конфликт между правилом 14 и лексемой AND разрешен выводом (AND < NOT).
 
 
 Состояние 20
 
-   18 not_expr: NOT filter .  [$end, error, STR, LEFT, RIGHT, OR, AND, NOT, SIZE, NEWLINE, QUIT]
-   22 filter: filter . AND entry_point
-   23       | filter . OR entry_point
+   15 not_expr: NOT filter .  [RIGHT, OR, AND, NEWLINE]
+   19 filter: filter . AND entry_point
+   20       | filter . OR entry_point
 
-    $default  вывод с использованием правила 18 (not_expr)
+    $default  вывод с использованием правила 15 (not_expr)
 
-    Конфликт между правилом 18 и лексемой OR разрешен выводом (OR < NOT).
-    Конфликт между правилом 18 и лексемой AND разрешен выводом (AND < NOT).
+    Конфликт между правилом 15 и лексемой OR разрешен выводом (OR < NOT).
+    Конфликт между правилом 15 и лексемой AND разрешен выводом (AND < NOT).
 
 
 Состояние 21
 
-   19 filter: SIZE IS . INT
-
-    INT  сдвиг, и переход в состояние 31
-
-
-Состояние 22
-
-   21 filter: SIZE LESS . INT
+   16 filter: SIZE IS . INT
 
     INT  сдвиг, и переход в состояние 32
 
 
-Состояние 23
+Состояние 22
 
-   20 filter: SIZE MORE . INT
+   18 filter: SIZE LESS . INT
 
     INT  сдвиг, и переход в состояние 33
 
 
+Состояние 23
+
+   17 filter: SIZE MORE . INT
+
+    INT  сдвиг, и переход в состояние 34
+
+
 Состояние 24
 
-    9 entry_point: . braced_expr
-   10            | . not_expr
-   11            | . filter
-   12 braced_expr: . LEFT not_expr RIGHT
-   13            | . LEFT filter RIGHT
-   14            | . LEFT braced_expr RIGHT
-   15            | . braced_expr AND entry_point
-   16            | . braced_expr OR entry_point
-   16            | braced_expr OR . entry_point
-   17 not_expr: . NOT braced_expr
-   18         | . NOT filter
-   19 filter: . SIZE IS INT
-   20       | . SIZE MORE INT
-   21       | . SIZE LESS INT
-   22       | . filter AND entry_point
-   23       | . filter OR entry_point
+    3 line: STR entry_point NEWLINE .
 
-    LEFT  сдвиг, и переход в состояние 5
-    NOT   сдвиг, и переход в состояние 6
-    SIZE  сдвиг, и переход в состояние 7
-
-    entry_point  переход в состояние 34
-    braced_expr  переход в состояние 13
-    not_expr     переход в состояние 14
-    filter       переход в состояние 15
+    $default  вывод с использованием правила 3 (line)
 
 
 Состояние 25
 
-    9 entry_point: . braced_expr
-   10            | . not_expr
-   11            | . filter
-   12 braced_expr: . LEFT not_expr RIGHT
-   13            | . LEFT filter RIGHT
-   14            | . LEFT braced_expr RIGHT
-   15            | . braced_expr AND entry_point
-   15            | braced_expr AND . entry_point
-   16            | . braced_expr OR entry_point
-   17 not_expr: . NOT braced_expr
-   18         | . NOT filter
-   19 filter: . SIZE IS INT
-   20       | . SIZE MORE INT
-   21       | . SIZE LESS INT
-   22       | . filter AND entry_point
-   23       | . filter OR entry_point
+    6 entry_point: . braced_expr
+    7            | . not_expr
+    8            | . filter
+    9 braced_expr: . LEFT not_expr RIGHT
+   10            | . LEFT filter RIGHT
+   11            | . LEFT braced_expr RIGHT
+   12            | . braced_expr AND entry_point
+   13            | . braced_expr OR entry_point
+   13            | braced_expr OR . entry_point
+   14 not_expr: . NOT braced_expr
+   15         | . NOT filter
+   16 filter: . SIZE IS INT
+   17       | . SIZE MORE INT
+   18       | . SIZE LESS INT
+   19       | . filter AND entry_point
+   20       | . filter OR entry_point
 
-    LEFT  сдвиг, и переход в состояние 5
-    NOT   сдвиг, и переход в состояние 6
-    SIZE  сдвиг, и переход в состояние 7
+    LEFT  сдвиг, и переход в состояние 8
+    NOT   сдвиг, и переход в состояние 9
+    SIZE  сдвиг, и переход в состояние 10
 
     entry_point  переход в состояние 35
-    braced_expr  переход в состояние 13
-    not_expr     переход в состояние 14
-    filter       переход в состояние 15
+    braced_expr  переход в состояние 12
+    not_expr     переход в состояние 13
+    filter       переход в состояние 14
 
 
 Состояние 26
 
-    9 entry_point: . braced_expr
-   10            | . not_expr
-   11            | . filter
-   12 braced_expr: . LEFT not_expr RIGHT
-   13            | . LEFT filter RIGHT
-   14            | . LEFT braced_expr RIGHT
-   15            | . braced_expr AND entry_point
-   16            | . braced_expr OR entry_point
-   17 not_expr: . NOT braced_expr
-   18         | . NOT filter
-   19 filter: . SIZE IS INT
-   20       | . SIZE MORE INT
-   21       | . SIZE LESS INT
-   22       | . filter AND entry_point
-   23       | . filter OR entry_point
-   23       | filter OR . entry_point
+    6 entry_point: . braced_expr
+    7            | . not_expr
+    8            | . filter
+    9 braced_expr: . LEFT not_expr RIGHT
+   10            | . LEFT filter RIGHT
+   11            | . LEFT braced_expr RIGHT
+   12            | . braced_expr AND entry_point
+   12            | braced_expr AND . entry_point
+   13            | . braced_expr OR entry_point
+   14 not_expr: . NOT braced_expr
+   15         | . NOT filter
+   16 filter: . SIZE IS INT
+   17       | . SIZE MORE INT
+   18       | . SIZE LESS INT
+   19       | . filter AND entry_point
+   20       | . filter OR entry_point
 
-    LEFT  сдвиг, и переход в состояние 5
-    NOT   сдвиг, и переход в состояние 6
-    SIZE  сдвиг, и переход в состояние 7
+    LEFT  сдвиг, и переход в состояние 8
+    NOT   сдвиг, и переход в состояние 9
+    SIZE  сдвиг, и переход в состояние 10
 
     entry_point  переход в состояние 36
-    braced_expr  переход в состояние 13
-    not_expr     переход в состояние 14
-    filter       переход в состояние 15
+    braced_expr  переход в состояние 12
+    not_expr     переход в состояние 13
+    filter       переход в состояние 14
 
 
 Состояние 27
 
-    9 entry_point: . braced_expr
-   10            | . not_expr
-   11            | . filter
-   12 braced_expr: . LEFT not_expr RIGHT
-   13            | . LEFT filter RIGHT
-   14            | . LEFT braced_expr RIGHT
-   15            | . braced_expr AND entry_point
-   16            | . braced_expr OR entry_point
-   17 not_expr: . NOT braced_expr
-   18         | . NOT filter
-   19 filter: . SIZE IS INT
-   20       | . SIZE MORE INT
-   21       | . SIZE LESS INT
-   22       | . filter AND entry_point
-   22       | filter AND . entry_point
-   23       | . filter OR entry_point
+    6 entry_point: . braced_expr
+    7            | . not_expr
+    8            | . filter
+    9 braced_expr: . LEFT not_expr RIGHT
+   10            | . LEFT filter RIGHT
+   11            | . LEFT braced_expr RIGHT
+   12            | . braced_expr AND entry_point
+   13            | . braced_expr OR entry_point
+   14 not_expr: . NOT braced_expr
+   15         | . NOT filter
+   16 filter: . SIZE IS INT
+   17       | . SIZE MORE INT
+   18       | . SIZE LESS INT
+   19       | . filter AND entry_point
+   20       | . filter OR entry_point
+   20       | filter OR . entry_point
 
-    LEFT  сдвиг, и переход в состояние 5
-    NOT   сдвиг, и переход в состояние 6
-    SIZE  сдвиг, и переход в состояние 7
+    LEFT  сдвиг, и переход в состояние 8
+    NOT   сдвиг, и переход в состояние 9
+    SIZE  сдвиг, и переход в состояние 10
 
     entry_point  переход в состояние 37
-    braced_expr  переход в состояние 13
-    not_expr     переход в состояние 14
-    filter       переход в состояние 15
+    braced_expr  переход в состояние 12
+    not_expr     переход в состояние 13
+    filter       переход в состояние 14
 
 
 Состояние 28
 
-   14 braced_expr: LEFT braced_expr RIGHT .
+    6 entry_point: . braced_expr
+    7            | . not_expr
+    8            | . filter
+    9 braced_expr: . LEFT not_expr RIGHT
+   10            | . LEFT filter RIGHT
+   11            | . LEFT braced_expr RIGHT
+   12            | . braced_expr AND entry_point
+   13            | . braced_expr OR entry_point
+   14 not_expr: . NOT braced_expr
+   15         | . NOT filter
+   16 filter: . SIZE IS INT
+   17       | . SIZE MORE INT
+   18       | . SIZE LESS INT
+   19       | . filter AND entry_point
+   19       | filter AND . entry_point
+   20       | . filter OR entry_point
 
-    $default  вывод с использованием правила 14 (braced_expr)
+    LEFT  сдвиг, и переход в состояние 8
+    NOT   сдвиг, и переход в состояние 9
+    SIZE  сдвиг, и переход в состояние 10
+
+    entry_point  переход в состояние 38
+    braced_expr  переход в состояние 12
+    not_expr     переход в состояние 13
+    filter       переход в состояние 14
 
 
 Состояние 29
 
-   12 braced_expr: LEFT not_expr RIGHT .
+   11 braced_expr: LEFT braced_expr RIGHT .
 
-    $default  вывод с использованием правила 12 (braced_expr)
+    $default  вывод с использованием правила 11 (braced_expr)
 
 
 Состояние 30
 
-   13 braced_expr: LEFT filter RIGHT .
+    9 braced_expr: LEFT not_expr RIGHT .
 
-    $default  вывод с использованием правила 13 (braced_expr)
+    $default  вывод с использованием правила 9 (braced_expr)
 
 
 Состояние 31
 
-   19 filter: SIZE IS INT .
+   10 braced_expr: LEFT filter RIGHT .
 
-    $default  вывод с использованием правила 19 (filter)
+    $default  вывод с использованием правила 10 (braced_expr)
 
 
 Состояние 32
 
-   21 filter: SIZE LESS INT .
+   16 filter: SIZE IS INT .
 
-    $default  вывод с использованием правила 21 (filter)
+    $default  вывод с использованием правила 16 (filter)
 
 
 Состояние 33
 
-   20 filter: SIZE MORE INT .
+   18 filter: SIZE LESS INT .
 
-    $default  вывод с использованием правила 20 (filter)
+    $default  вывод с использованием правила 18 (filter)
 
 
 Состояние 34
 
-   16 braced_expr: braced_expr OR entry_point .
+   17 filter: SIZE MORE INT .
 
-    $default  вывод с использованием правила 16 (braced_expr)
+    $default  вывод с использованием правила 17 (filter)
 
 
 Состояние 35
 
-   15 braced_expr: braced_expr AND entry_point .
+   13 braced_expr: braced_expr OR entry_point .
 
-    $default  вывод с использованием правила 15 (braced_expr)
+    $default  вывод с использованием правила 13 (braced_expr)
 
 
 Состояние 36
 
-   23 filter: filter OR entry_point .
+   12 braced_expr: braced_expr AND entry_point .
 
-    $default  вывод с использованием правила 23 (filter)
+    $default  вывод с использованием правила 12 (braced_expr)
 
 
 Состояние 37
 
-   22 filter: filter AND entry_point .
+   20 filter: filter OR entry_point .
 
-    $default  вывод с использованием правила 22 (filter)
+    $default  вывод с использованием правила 20 (filter)
+
+
+Состояние 38
+
+   19 filter: filter AND entry_point .
+
+    $default  вывод с использованием правила 19 (filter)

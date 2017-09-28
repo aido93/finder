@@ -11,9 +11,7 @@ using namespace std;
 extern int yylex();
 extern int yyparse();
 extern FILE* yyin;
-const char* begin_line="Path in quotes: ";
-static bool flag=false;
-string path;
+const char* begin_line="> ";
 predicate_abstract_factory factory;
 
 void yyerror(const char* s)
@@ -41,63 +39,40 @@ void yyerror(const char* s)
 %token NEWLINE QUIT
 
 %type<pred> entry_point braced_expr not_expr filter
-%type<str> path_rule
 %start input
 
 %%
 
 input  : /*empty*/
-	   | input NEWLINE
 	   | input line
 ;
 
-line:  entry_point 
+line: STR entry_point NEWLINE 
 	{
-		std::cout<<"entry"<<std::endl;
-		if(flag)
-		{
-			state s;
-		    bf::recursive_directory_iterator dir{bf::path(path)};
-        	for(auto file: dir)
-        	{
-				s.file=file;
-				if((*$1)(s))
-				{
-					auto fn=file.path().string();
-					std::cout<<"\t"<<fn.substr(path.length(), fn.length()-path.length())<<std::endl;
-				}
+		std::cout<<"string::"<<$1<<std::endl;
+		string path = regex_replace($1, regex("^\" +| +\"$|/+\"$"), "$1");
+        if(path[path.length()-1] != '/')
+        {
+		    path+="/";
+        }
+		state s;
+		bf::recursive_directory_iterator dir{bf::path(path)};
+        for(auto file: dir)
+        {
+			std::cout<<file.path().string()<<std::endl;
+			s.file=file;
+			if((*$2)(s))
+			{
+				auto fn=file.path().string();
+				std::cout<<"\t"<<fn.substr(path.length(), fn.length()-path.length())<<std::endl;
 			}
-			path="";
-			begin_line="Path in quotes: ";
-			flag=!flag;
 		}
 	} 
-	| path_rule 
-	{
-		std::cout<<"path"<<std::endl;
-		if(!flag)
-		{	
-			path = regex_replace(path, regex("^\" +| +\"$|/+\"$"), "$1");
-        	if(path[path.length()-1] != '/')
-        	{
-		        path+="/";
-        	}
-			begin_line="Condition: ";
-			flag=!flag;
-		}
-	}
-	| error 
+	| error NEWLINE
 	{
 		yyerrok;
 	}
-    | QUIT { printf("bye!\n"); exit(0); }
-;
-
-path_rule:  STR
-		  	{
-				path=$1;
-				$$=nullptr;
-			}
+    | QUIT NEWLINE { printf("bye!\n"); exit(0); }
 ;
 
 entry_point: 
