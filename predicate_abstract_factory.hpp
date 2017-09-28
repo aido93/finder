@@ -56,11 +56,11 @@ class predicate
 	public:
 		virtual bool operator()(const state&) const =0;
 		virtual predicate* clone() const =0;
-		predicate(const inner_state& st):st(st){}
+		predicate(const inner_state& _st):st(_st){}
 		predicate(){}
-		void set_inner_state(const inner_state& inner_st)
+		void set_inner_state(const inner_state& _st)
 		{
-			st=st;
+			st=_st;
 		}
 		
 		predicate* operator! () const

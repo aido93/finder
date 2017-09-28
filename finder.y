@@ -56,15 +56,24 @@ line: NEWLINE
 		    path+="/";
         }
 		state s;
-		bf::recursive_directory_iterator dir{bf::path(path)};
-        for(auto file: dir)
-        {
-			std::cout<<file.path().string()<<std::endl;
-			s.file=file;
-			if(bf::is_regular_file(file) && (*$2)(s))
+		bf::recursive_directory_iterator dir{bf::path(path)}, end;
+		auto it=bf::begin(dir);
+		while(it!=end)
+		{
+			s.file=*it;
+			if(bf::is_regular_file(s.file) && (*$2)(s))
 			{
-				auto fn=file.path().string();
+				auto fn=it->path().string();
 				std::cout<<"\t"<<fn.substr(path.length(), fn.length()-path.length())<<std::endl;
+			}
+			try
+			{
+				it++;
+			}
+			catch(const bf::filesystem_error& err)
+			{
+				cout<<err.what()<<endl;
+				continue;
 			}
 		}
 	} 
