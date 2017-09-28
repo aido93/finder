@@ -3,21 +3,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <functional>
 #include <string>
 #include <regex>
-#include "predicate_abstract_factory.hpp"
 #include <iostream>
+#include "predicate_abstract_factory.hpp"
 using namespace std;
 extern int yylex();
 extern int yyparse();
 extern FILE* yyin;
-const char* begin_line="> ";
+
 predicate_abstract_factory factory;
 
-void yyerror(const char* s)
-{
-	std::cerr<<"error: "<<s<<"\n";
-}
+void yyerror(const char* s);
 %}
 
 %union {
@@ -30,8 +28,7 @@ void yyerror(const char* s)
 %token<str> STR
 
 %token LEFT RIGHT
-%left OR
-%left AND
+%left AND OR
 %left NOT
 
 %left NAME SIZE ATTRIBUTE
@@ -39,18 +36,21 @@ void yyerror(const char* s)
 %token NEWLINE QUIT
 
 %type<pred> entry_point braced_expr not_expr filter
-%start input
+
+%start finding
 
 %%
 
-input  : /*empty*/
-	   | input line
+finding: 
+	   | finding line
 ;
 
-line: STR entry_point NEWLINE 
+line: NEWLINE
+    | STR entry_point NEWLINE 
 	{
-		std::cout<<"string::"<<$1<<std::endl;
-		string path = regex_replace($1, regex("^\" +| +\"$|/+\"$"), "$1");
+		string path = string($1);
+		path=path.substr(1, path.length()-2);
+		path = regex_replace(path, regex("^ +| +$|/+$"), "$1");
         if(path[path.length()-1] != '/')
         {
 		    path+="/";
@@ -61,22 +61,17 @@ line: STR entry_point NEWLINE
         {
 			std::cout<<file.path().string()<<std::endl;
 			s.file=file;
-			if((*$2)(s))
+			if(bf::is_regular_file(file) && (*$2)(s))
 			{
 				auto fn=file.path().string();
 				std::cout<<"\t"<<fn.substr(path.length(), fn.length()-path.length())<<std::endl;
 			}
 		}
 	} 
-	| error NEWLINE
-	{
-		yyerrok;
-	}
     | QUIT NEWLINE { printf("bye!\n"); exit(0); }
 ;
 
-entry_point: 
-		    braced_expr
+entry_point  : braced_expr
 			{
 				$$ = $1;
 			}
@@ -172,3 +167,7 @@ int main() {
 	return 0;
 }
 
+void yyerror(const char* s) {
+	fprintf(stderr, "Parse error: %s\n", s);
+	exit(1);
+}
