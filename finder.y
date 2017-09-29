@@ -1,5 +1,15 @@
 %{
-
+/** TODO:
+1) add to predicates test is_regular_file
+2) add tests on predicate_abstract_factory.hpp
+3) add cmake build
+4) add simple syntax error handling
+5) add new predicates and states (attribute)
+6) refactor code to divide bison and logic
+7) add libreadline support
+8) add doxygen
+9) add smart pointers
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>

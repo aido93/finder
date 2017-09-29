@@ -5,7 +5,7 @@ class is_equal : public predicate
 	public:
 		virtual bool operator()(const state& s) const override 
 		{
-			return bf::file_size(s.file)==get_inner_state().size;
+			return bf::is_regular_file(s.file) && bf::file_size(s.file)==get_inner_state().size;
 		}
 		virtual predicate* clone() const override 
 		{
@@ -20,7 +20,7 @@ class is_more : public predicate
 	public:
 		virtual bool operator()(const state& s) const override
 		{
-			return bf::file_size(s.file)>get_inner_state().size;
+			return bf::is_regular_file(s.file) && bf::file_size(s.file)>get_inner_state().size;
 		}
 		virtual predicate* clone() const override
 		{
@@ -35,7 +35,7 @@ class is_less : public predicate
 	public:
 		virtual bool operator()(const state& s) const override
 		{
-			return bf::file_size(s.file)<get_inner_state().size;
+			return bf::is_regular_file(s.file) && bf::file_size(s.file)<get_inner_state().size;
 		}
 		virtual predicate* clone() const override
 		{
