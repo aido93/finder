@@ -12,6 +12,14 @@
 
 namespace bf=boost::filesystem;
 
+enum class attribute
+{
+	file,
+	directory,
+	hidden,
+	readonly
+};
+
 struct state
 {
 	bf::path file;
@@ -30,16 +38,19 @@ struct inner_state
 {
 	uint32_t size;
 	std::string str;
+	attribute attr;
 	inner_state(){}
 	inner_state(const inner_state& copy) : 
 			size(copy.size),
-			str(copy.str)
+			str(copy.str),
+			attr(copy.attr)
 	{
 	}
 	inner_state& operator=(const inner_state& from)
 	{
 		size=from.size;
 		str=from.str;
+		attr=from.attr;
 		return *this;
 	}
 };

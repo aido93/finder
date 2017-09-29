@@ -3,7 +3,7 @@
 1) add to predicates test is_regular_file - done
 2) add tests on predicate_abstract_factory.hpp
 3) add cmake build - done
-4) add simple syntax error handling
+4) add simple syntax error handling - done
 5) add new predicates and states (attribute)
 6) refactor code to divide bison and logic
 7) add libreadline support
@@ -44,7 +44,7 @@ void yyerror(const char* str) {
 %left NOT
 
 %left NAME SIZE ATTRIBUTE
-%token IS LESS MORE CONTAINS
+%token IS LESS MORE CONTAINS HIDDEN READONLY DIRECTORY
 %token NEWLINE QUIT
 
 %type<pred> entry_point braced_expr not_expr filter
@@ -88,6 +88,7 @@ line: NEWLINE
 				continue;
 			}
 		}
+		cout<<"Search finished"<<endl;
 	} 
 	| error NEWLINE
 	{
@@ -151,8 +152,7 @@ filter  :
 			func->set_inner_state(s);
 			$$=func;
 		}
-		|
-		SIZE MORE INT 
+		| SIZE MORE INT 
 	    {
 			auto func = factory.get_function("is_more");
 			inner_state s;
@@ -160,12 +160,79 @@ filter  :
 			func->set_inner_state(s);
 			$$=func;
 		}
-		|
-		SIZE LESS INT 
+		| SIZE LESS INT 
 	    {
 			auto func = factory.get_function("is_less");
 			inner_state s;
 			s.size=$3;
+			func->set_inner_state(s);
+			$$=func;
+		}
+		| NAME IS STR 
+	    {
+			auto func = factory.get_function("is_name_equals");
+			inner_state s;
+			//delete quotes
+			s.str=string($3);
+			s.str=s.str.substr(1, s.str.length()-2);
+			func->set_inner_state(s);
+			$$=func;
+		}
+		| NAME CONTAINS STR 
+	    {
+			auto func = factory.get_function("contains");
+			inner_state s;
+			//delete quotes
+			s.str=string($3);
+			s.str=s.str.substr(1, s.str.length()-2);
+			func->set_inner_state(s);
+			$$=func;
+		}
+		| ATTRIBUTE IS DIRECTORY
+	    {
+			auto func = factory.get_function("attribute_is");
+			inner_state s;
+			s.attr=attribute::directory;
+			func->set_inner_state(s);
+			$$=func;
+		}
+		| ATTRIBUTE IS HIDDEN
+	    {
+			auto func = factory.get_function("attribute_is");
+			inner_state s;
+			s.attr=attribute::hidden;
+			func->set_inner_state(s);
+			$$=func;
+		}
+		| ATTRIBUTE IS READONLY
+	    {
+			auto func = factory.get_function("attribute_is");
+			inner_state s;
+			s.attr=attribute::readonly;
+			func->set_inner_state(s);
+			$$=func;
+		}
+		| ATTRIBUTE NOT DIRECTORY
+	    {
+			auto func = factory.get_function("attribute_not");
+			inner_state s;
+			s.attr=attribute::directory;
+			func->set_inner_state(s);
+			$$=func;
+		}
+		| ATTRIBUTE NOT HIDDEN
+	    {
+			auto func = factory.get_function("attribute_not");
+			inner_state s;
+			s.attr=attribute::hidden;
+			func->set_inner_state(s);
+			$$=func;
+		}
+		| ATTRIBUTE NOT READONLY
+	    {
+			auto func = factory.get_function("attribute_not");
+			inner_state s;
+			s.attr=attribute::readonly;
 			func->set_inner_state(s);
 			$$=func;
 		}

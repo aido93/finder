@@ -27,6 +27,11 @@
 "name"				{return NAME;}
 "size"				{return SIZE;}
 "attribute" 		{return ATTRIBUTE;}
+
+"readonly"	 		{return READONLY;}
+"hidden" 			{return HIDDEN;}
+"directory" 		{return DIRECTORY;}
+
 "=="				{return IS;}
 "<"                 {return LESS;}
 ">"                 {return MORE;}
