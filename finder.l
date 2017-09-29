@@ -36,5 +36,6 @@
 "exit"				{return QUIT;}
 "quit"				{return QUIT;}
 \n					{return NEWLINE;}
+.    				{ fprintf(stderr, "Unexpected input character '%c', ignoring\n", *yytext); }
 
 %%

@@ -1,8 +1,8 @@
 %{
 /** TODO:
-1) add to predicates test is_regular_file
+1) add to predicates test is_regular_file - done
 2) add tests on predicate_abstract_factory.hpp
-3) add cmake build
+3) add cmake build - done
 4) add simple syntax error handling
 5) add new predicates and states (attribute)
 6) refactor code to divide bison and logic
@@ -25,7 +25,9 @@ extern FILE* yyin;
 
 predicate_abstract_factory factory;
 
-void yyerror(const char* s);
+void yyerror(const char* str) {
+	std::cerr<<"Parse error: "<<str<<"\n";
+}
 %}
 
 %union {
@@ -87,6 +89,10 @@ line: NEWLINE
 			}
 		}
 	} 
+	| error NEWLINE
+	{
+		yyerrok;
+	}
     | QUIT NEWLINE { printf("bye!\n"); exit(0); }
 ;
 
@@ -184,9 +190,4 @@ int main() {
 	} while(!feof(yyin));
 
 	return 0;
-}
-
-void yyerror(const char* s) {
-	fprintf(stderr, "Parse error: %s\n", s);
-	exit(1);
 }
