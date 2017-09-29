@@ -88,6 +88,7 @@ line: NEWLINE
 				continue;
 			}
 		}
+		delete $2;
 		cout<<"Search finished"<<endl;
 	} 
 	| error NEWLINE

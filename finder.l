@@ -16,7 +16,7 @@
 
 [ \t]	; // ignore all whitespace
 [0-9]+				{yylval.ival = atoi(yytext); return INT;}
-\"[a-zA-Z0-9\/]+\"	{yylval.str = strdup(yytext); return STR;}
+\"[a-zA-Z0-9.\/]+\"	{yylval.str = strdup(yytext); return STR;}
 
 "and"				{return AND;}
 "or"				{return OR;}

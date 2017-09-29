@@ -67,6 +67,8 @@ class predicate
 	public:
 		virtual bool operator()(const state&) const =0;
 		virtual predicate* clone() const =0;
+		virtual ~predicate()
+		{}
 		predicate(const inner_state& _st):st(_st){}
 		predicate(){}
 		void set_inner_state(const inner_state& _st)
@@ -99,8 +101,13 @@ class predicate
 					{
 						return prev;
 					}
+					virtual ~Not()
+					{
+						if(prev)
+							delete prev;
+					}
 				private:
-					const predicate* prev;
+					const predicate* prev=nullptr;
 			};
 			return new Not(this);
 		}
@@ -136,9 +143,16 @@ class predicate
 					{
 						return prev_right;
 					}
+					virtual ~And()
+					{
+						if(prev_left)
+							delete prev_left;
+						if(prev_right)
+							delete prev_right;
+					}
 				private:
-					const predicate* prev_left;
-					const predicate* prev_right;
+					const predicate* prev_left=nullptr;
+					const predicate* prev_right=nullptr;
 			};
 			return new And(this, b);
 		}
@@ -173,6 +187,13 @@ class predicate
 					const predicate* get_prev_right() const
 					{
 						return prev_right;
+					}
+					virtual ~Or()
+					{
+						if(prev_left)
+							delete prev_left;
+						if(prev_right)
+							delete prev_right;
 					}
 				private:
 					const predicate* prev_left;
