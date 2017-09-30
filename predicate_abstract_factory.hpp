@@ -245,3 +245,4 @@ class predicate_abstract_factory
 };
 
 void initialize_factory(predicate_abstract_factory& fact);
+void predicate_driver(const std::string&, const predicate*);

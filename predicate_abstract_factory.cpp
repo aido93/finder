@@ -174,3 +174,44 @@ void initialize_factory(predicate_abstract_factory& fact)
 	fact.register_function("attribute_is", new attribute_is);	
 	fact.register_function("attribute_not", new attribute_not);	
 }
+
+#include <iostream>
+#include <regex>
+
+inline static std::string extract_path(const std::string& str)
+{
+	std::string path=str.substr(1, str.length()-2);
+	path = std::regex_replace(path, std::regex("^ +| +$|/+$"), "$1");
+    if(path[path.length()-1] != '/')
+    {
+	    path+="/";
+    }
+	return path;
+}
+
+void predicate_driver(const std::string& str, const predicate* pred)
+{
+	state s;
+	std::string path=extract_path(str);
+	bf::recursive_directory_iterator dir{bf::path(path)}, end;
+	auto it=bf::begin(dir);
+	while(it!=end)
+	{
+		s.file=*it;
+		if(bf::is_regular_file(s.file) && (*pred)(s))
+		{
+			auto fn=it->path().string();
+			std::cout<<"\t"<<fn.substr(path.length(), fn.length()-path.length())<<std::endl;
+		}
+		try
+		{
+			it++;
+		}
+		catch(const bf::filesystem_error& err)
+		{
+			std::cout<<err.what()<<std::endl;
+			continue;
+		}
+	}
+	delete pred;
+}
