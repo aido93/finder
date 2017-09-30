@@ -198,7 +198,7 @@ void predicate_driver(const std::string& str, const predicate* pred)
 	while(it!=end)
 	{
 		s.file=*it;
-		if(bf::is_regular_file(s.file) && (*pred)(s))
+		if((*pred)(s))
 		{
 			auto fn=it->path().string();
 			std::cout<<"\t"<<fn.substr(path.length(), fn.length()-path.length())<<std::endl;
