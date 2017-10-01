@@ -9,7 +9,46 @@
 
 #include "finder.tab.hpp"
 
-//#include "abstract_factory.hpp"
+#define USE_READLINE
+
+#ifdef USE_READLINE
+
+	#include <readline/readline.h>
+	const char* begin_line=">";
+	inline void readline_input(char* buf, int* result, const size_t max_size)
+	{
+		char* residue_string=NULL;
+		char* input_line=NULL;
+		if ( YY_CURRENT_BUFFER_LVALUE->yy_is_interactive ) 
+		{ 
+			if(!residue_string)
+			{
+				input_line=readline(begin_line);
+				residue_string=input_line;
+			}
+			size_t n; 
+			if(input_line)
+				for ( n = 0; n < max_size-1 && residue_string[n]!='\0'; ++n ) 
+				{
+					buf[n] = residue_string[n]; 
+				}
+	        buf[n++]='\n';
+			if(n==max_size && (input_line[n]!='\0' || input_line[n]!=EOF))
+			{
+				residue_string=&input_line[n+1];
+			}
+	        else 
+    	    {
+        	    residue_string=NULL;
+            	free(input_line);
+        	}
+			*result = n; 
+		}
+	}
+	#define YY_INPUT(buf, result, max_size) \
+		readline_input((buf), (&result), (max_size));
+	 
+#endif
 %}
 
 %%
