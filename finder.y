@@ -222,11 +222,8 @@ filter  :
 
 int main() {
 	initialize_factory(factory);
-	yyin = stdin;
 
-	do { 
-		yyparse();
-	} while(!feof(yyin));
+	yyparse();
 
 	return 0;
 }

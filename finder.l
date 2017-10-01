@@ -15,7 +15,7 @@
 
 	#include <readline/readline.h>
 	const char* begin_line=">";
-	inline void readline_input(char* buf, int* result, const size_t max_size)
+	inline int readline_input(char* buf, const size_t max_size)
 	{
 		char* residue_string=NULL;
 		char* input_line=NULL;
@@ -26,7 +26,7 @@
 				input_line=readline(begin_line);
 				residue_string=input_line;
 			}
-			size_t n; 
+			int n=0; 
 			if(input_line)
 				for ( n = 0; n < max_size-1 && residue_string[n]!='\0'; ++n ) 
 				{
@@ -42,11 +42,12 @@
         	    residue_string=NULL;
             	free(input_line);
         	}
-			*result = n; 
+			//printf("%s\tresult: %d\n", buf, n);
+			return n;
 		}
 	}
 	#define YY_INPUT(buf, result, max_size) \
-		readline_input((buf), (&result), (max_size));
+		result=readline_input((buf), (max_size));
 	 
 #endif
 %}
