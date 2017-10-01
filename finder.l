@@ -9,7 +9,7 @@
 
 #include "finder.tab.hpp"
 
-#define USE_READLINE
+#include "config.h"
 
 #ifdef USE_READLINE
 

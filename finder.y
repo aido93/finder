@@ -17,6 +17,7 @@
 #include <string>
 #include <regex>
 #include <iostream>
+#include "config.h"
 #include "predicate_abstract_factory.hpp"
 using namespace std;
 extern int yylex();
@@ -222,8 +223,13 @@ filter  :
 
 int main() {
 	initialize_factory(factory);
-
-	yyparse();
-
+	#ifdef USE_READLINE
+		yyparse();
+	#else
+		yyin = stdin;
+		do {
+			yyparse();
+		} while(!feof(yyin));	
+	#endif	
 	return 0;
 }
