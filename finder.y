@@ -20,7 +20,7 @@
 #include "config.h"
 #include "predicate_abstract_factory.hpp"
 using namespace std;
-extern int yylex();
+extern "C" int yylex();
 extern int yyparse();
 extern FILE* yyin;
 
@@ -29,6 +29,11 @@ predicate_abstract_factory factory;
 void yyerror(const char* str) {
 	std::cerr<<"Parse error: "<<str<<"\n";
 }
+
+int yywrap()
+{
+    return 1;
+} 
 %}
 
 %union {

@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define YY_DECL int yylex()
+#define YY_DECL extern "C" int yylex()
 
 #include "finder.tab.hpp"
 
@@ -52,6 +52,7 @@
 #endif
 %}
 
+%option noyywrap
 %%
 
 [ \t]	; // ignore all whitespace
