@@ -197,7 +197,8 @@ void predicate_driver(const std::string& str, const predicate* pred)
 	std::string path=extract_path(str);
 	bf::recursive_directory_iterator dir{bf::path(path)}, end;
 	auto it=bf::begin(dir);
-	while(it!=end && !stop)
+	stop=false;
+	while(stop==false && it!=end)
 	{
 		s.file=*it;
 		if((*pred)(s))

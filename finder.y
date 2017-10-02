@@ -14,13 +14,12 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <signal.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
 #include <functional>
 #include <string>
 #include <regex>
 #include <iostream>
+#include <boost/thread.hpp>
+#include <boost/asio/signal_set.hpp>
 #include "config.h"
 #include "predicate_abstract_factory.hpp"
 using namespace std;
@@ -230,19 +229,22 @@ filter  :
 %%
 
 extern bool stop;
-void my_handler(int s){
+void my_handler (int s)
+{
 	stop=true;
 }
 
-int main() {
+int main() 
+{
 	initialize_factory(factory);
 	/*register Ctrl+C callback*/
 	struct sigaction sigIntHandler;
+
 	sigIntHandler.sa_handler = my_handler;
 	sigemptyset(&sigIntHandler.sa_mask);
 	sigIntHandler.sa_flags = 0;
-	sigaction(SIGINT, &sigIntHandler, NULL);
 
+	sigaction(SIGINT, &sigIntHandler, NULL);
 	yyin = stdin;
 	do {
 		yyparse();
