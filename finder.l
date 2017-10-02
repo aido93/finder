@@ -17,27 +17,26 @@
 	const char* begin_line=">";
 	inline int readline_input(char* buf, const size_t max_size)
 	{
-		char* residue_string=NULL;
-		char* input_line=NULL;
+		static char* residue_string=nullptr;
+		static char* input_line=nullptr;
 		if ( YY_CURRENT_BUFFER_LVALUE->yy_is_interactive ) 
 		{ 
-			if(!residue_string)
+			if(residue_string == nullptr)
 			{
 				input_line=readline(begin_line);
 				residue_string=input_line;
 			}
-			int n=0; 
-			if(input_line)
-				for ( n = 0; n < max_size-1 && residue_string[n]!='\0'; ++n ) 
-				{
-					buf[n] = residue_string[n]; 
-				}
-	        buf[n++]='\n';
-			if(n==max_size && (input_line[n]!='\0' || input_line[n]!=EOF))
+			int n; 
+			for ( n = 0; n < max_size-1 && residue_string[n]!='\0'; ++n ) 
 			{
-				residue_string=&input_line[n+1];
+				buf[n] = residue_string[n]; 
 			}
-	        else 
+			if(n < max_size)
+			{
+	        	buf[n++]='\n';
+			}
+			residue_string = &input_line[n];
+	        if (residue_string[0] == '\0')
     	    {
         	    residue_string=NULL;
             	free(input_line);
@@ -81,7 +80,7 @@
 
 "exit"				{return QUIT;}
 "quit"				{return QUIT;}
-\n					{return NEWLINE;}
+\n					{return NEWLINE_T;}
 .    				{ fprintf(stderr, "Unexpected input character '%c', ignoring\n", *yytext); }
 
 %%

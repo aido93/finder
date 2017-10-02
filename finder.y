@@ -51,7 +51,7 @@ int yywrap()
 
 %left NAME SIZE ATTRIBUTE
 %token IS LESS MORE CONTAINS HIDDEN READONLY DIRECTORY
-%token NEWLINE QUIT
+%token NEWLINE_T QUIT
 
 %type<pred> entry_point braced_expr not_expr filter
 
@@ -63,16 +63,16 @@ finding:
 	   | finding line
 ;
 
-line: NEWLINE
-    | STR entry_point NEWLINE 
+line: NEWLINE_T
+    | STR entry_point NEWLINE_T
 	{
 		predicate_driver($1, $2);
 	} 
-	| error NEWLINE
+	| error NEWLINE_T
 	{
 		yyerrok;
 	}
-    | QUIT NEWLINE { printf("bye!\n"); exit(0); }
+    | QUIT NEWLINE_T { printf("bye!\n"); exit(0); }
 ;
 
 entry_point  : braced_expr

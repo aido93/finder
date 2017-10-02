@@ -1,3 +1,3 @@
 #pragma once
 
-//#define USE_READLINE
+#define USE_READLINE
