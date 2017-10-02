@@ -24,17 +24,16 @@
 			if(residue_string == nullptr)
 			{
 				input_line=readline(begin_line);
+				if(input_line==nullptr)
+				{
+					input_line = strdup("");
+				}
 				residue_string=input_line;
 			}
 			int n; 
-//			printf("%s\tresid\n", residue_string);
 			for ( n = 0; n < max_size-1 && residue_string[n]!='\0'; ++n ) 
 			{
 				buf[n] = residue_string[n]; 
-			}
-			if(n < max_size)
-			{
-	        	buf[n++]='\n';
 			}
 			residue_string = &input_line[n];
 	        if (residue_string[0] == '\0')
@@ -42,7 +41,10 @@
         	    residue_string=nullptr;
             	free(input_line);
         	}
-			printf("%s\tresult: %d\n", buf, n);
+			if(n < max_size)
+			{
+	        	buf[n++]='\n';
+			}
 			return n;
 		}
 	}
