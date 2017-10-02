@@ -228,13 +228,9 @@ filter  :
 
 int main() {
 	initialize_factory(factory);
-	#ifdef USE_READLINE
+	yyin = stdin;
+	do {
 		yyparse();
-	#else
-		yyin = stdin;
-		do {
-			yyparse();
-		} while(!feof(yyin));	
-	#endif	
+	} while(!feof(yyin));	
 	return 0;
 }

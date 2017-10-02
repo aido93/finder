@@ -27,6 +27,7 @@
 				residue_string=input_line;
 			}
 			int n; 
+//			printf("%s\tresid\n", residue_string);
 			for ( n = 0; n < max_size-1 && residue_string[n]!='\0'; ++n ) 
 			{
 				buf[n] = residue_string[n]; 
@@ -38,10 +39,10 @@
 			residue_string = &input_line[n];
 	        if (residue_string[0] == '\0')
     	    {
-        	    residue_string=NULL;
+        	    residue_string=nullptr;
             	free(input_line);
         	}
-			//printf("%s\tresult: %d\n", buf, n);
+			printf("%s\tresult: %d\n", buf, n);
 			return n;
 		}
 	}
@@ -51,7 +52,6 @@
 #endif
 %}
 
-%option noyywrap
 %%
 
 [ \t]	; // ignore all whitespace
