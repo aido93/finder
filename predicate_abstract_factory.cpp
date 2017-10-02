@@ -189,13 +189,15 @@ inline static std::string extract_path(const std::string& str)
 	return path;
 }
 
+bool stop=false;
+
 void predicate_driver(const std::string& str, const predicate* pred)
 {
 	state s;
 	std::string path=extract_path(str);
 	bf::recursive_directory_iterator dir{bf::path(path)}, end;
 	auto it=bf::begin(dir);
-	while(it!=end)
+	while(it!=end && !stop)
 	{
 		s.file=*it;
 		if((*pred)(s))

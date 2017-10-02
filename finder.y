@@ -13,6 +13,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
 #include <functional>
 #include <string>
 #include <regex>
@@ -23,7 +27,6 @@ using namespace std;
 extern "C" int yylex();
 extern int yyparse();
 extern FILE* yyin;
-
 predicate_abstract_factory factory;
 
 void yyerror(const char* str) {
@@ -226,8 +229,20 @@ filter  :
 
 %%
 
+extern bool stop;
+void my_handler(int s){
+	stop=true;
+}
+
 int main() {
 	initialize_factory(factory);
+	/*register Ctrl+C callback*/
+	struct sigaction sigIntHandler;
+	sigIntHandler.sa_handler = my_handler;
+	sigemptyset(&sigIntHandler.sa_mask);
+	sigIntHandler.sa_flags = 0;
+	sigaction(SIGINT, &sigIntHandler, NULL);
+
 	yyin = stdin;
 	do {
 		yyparse();
